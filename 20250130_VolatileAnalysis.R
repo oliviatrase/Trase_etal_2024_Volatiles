@@ -61,8 +61,8 @@ voc_check_df$File.Name <- paste0("X",voc_check_df$File.Name)
 voc_check_df$File.Name <- gsub("(.+?_.+?)_.*" ,"\\1", voc_check_df$File.Name)
 
 voc_check_df_final <- voc_check_df %>% 
-  group_by(Compound_new, File.Name) %>%
-  summarise(max_area=max(Component.Area)) %>%
+  dplyr::group_by(Compound_new, File.Name) %>%
+  dplyr::summarise(max_area=max(Component.Area)) %>%
   reshape2::dcast(Compound_new ~ File.Name, value.var="max_area")
 
 voc_check_df_final$CAS <- "13466-78-9"
@@ -415,10 +415,11 @@ Volatiles_norm_subset2 <- Volatiles_norm_subset1[, !(names(Volatiles_norm_subset
 rows_to_remove <- which(rowSums(Volatiles_norm_subset2 > 0) < 3)
 Volatile_matrix_norm2 <- Volatiles_norm_subset2[ !(names(Volatiles_norm_subset2) %in% rows_to_remove),]
 
+## write csv of new volatile matrix for machine learning
+Volatile_matrix_norm3 <- Volatile_matrix_norm2
+Volatile_matrix_norm3$Totals <- rowSums(Volatile_matrix_norm3[5:length(colnames(Volatile_matrix_norm3))])
+write.csv(Volatile_matrix_norm3,"20250306_Volatiles_normalized.csv")
 
-
-## optional write csv of new volatile matrix
-# write.csv(Volatile_matrix_norm2,"Volatiles_normalized2.csv")
 
 #### Volatile Composition ####
 
